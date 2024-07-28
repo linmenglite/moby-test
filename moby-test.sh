@@ -2,10 +2,10 @@
 
 set -euo pipefail
 
-GO_VERSION="1.21.11"
+GO_VERSION="1.21.12"
 GO_BASE_URL="https://golang.google.cn/dl"
-REPO_URL="https://gitee.com/mahaoliang/moby.git"
-REPO_DIR="src/github.com/docker/docker"
+REPO_URL="https://gitee.com/linmenglite/moby.git"
+REPO_DIR="src/github.com/docker"
 
 # 检测平台架构
 ARCH=$(uname -m)
@@ -36,7 +36,7 @@ GO_URL="${GO_BASE_URL}/${GO_TAR}"
 echo "Current platform: $ARCH"
 echo "Download package: $GO_TAR"
 
-BASE_DIR=$(cd "$(dirname "$0")"; pwd)
+BASE_DIR=$(pwd)
 cd ${BASE_DIR}
 
 # 如果不存在go${GO_VERSION}目录，则下载并解压
