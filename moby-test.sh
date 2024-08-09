@@ -2,93 +2,9 @@
 
 set -euo pipefail
 
-GO_VERSION="1.21.12"
-GO_BASE_URL="https://golang.google.cn/dl"
-REPO_URL="https://gitee.com/linmenglite/moby.git"
-REPO_DIR="src/github.com/docker"
-
-# 检测平台架构
-ARCH=$(uname -m)
-
-# 根据架构设置下载URL
-case "$ARCH" in
-    x86_64)
-        GO_TAR="go${GO_VERSION}.linux-amd64.tar.gz"
-        ;;
-    loongarch64)
-        GO_TAR="go${GO_VERSION}.linux-loong64.tar.gz"
-        ;;
-    aarch64)
-        GO_TAR="go${GO_VERSION}.linux-arm64.tar.gz"
-        ;;
-    riscv64)
-        GO_TAR="go${GO_VERSION}.linux-riscv64.tar.gz"
-        ;;
-    *)
-        echo "Unsupported architecture: $ARCH"
-        exit 1
-        ;;
-esac
-
-GO_URL="${GO_BASE_URL}/${GO_TAR}"
-
-# 输出当前平台和安装包名称
-echo "Current platform: $ARCH"
-echo "Download package: $GO_TAR"
-
-BASE_DIR=$(pwd)
-cd ${BASE_DIR}
-
-# 如果不存在go${GO_VERSION}目录，则下载并解压
-if [ ! -d "go${GO_VERSION}" ]; then
-    # 下载Go安装包
-    echo "Downloading Go from ${GO_URL}..."
-    curl -LO ${GO_URL}
-
-    # 解压安装包
-    echo "Extracting Go..."
-    tar -xzf ${GO_TAR}
-
-    # 移动并重命名解压后的目录
-    mv go go${GO_VERSION}
-else
-    echo "Directory go${GO_VERSION} already exists. Skipping download."
-fi
-
-# 更新PATH环境变量
-export PATH=${BASE_DIR}/go${GO_VERSION}/bin:$PATH
-
-# 验证安装
-echo "Go installation completed. Version:"
-go version
-
-
-# 设置Go环境变量
-export GOTOOLCHAIN=local
-export GO111MODULE=off
-export GOPATH=${BASE_DIR}/gopath
-export GOROOT=${BASE_DIR}/go${GO_VERSION}
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-
-# 创建GOPATH目录
-mkdir -p ${GOPATH}
-
-# 创建存储库目录
-REPO_PATH="${GOPATH}/${REPO_DIR}"
-if [ ! -d "${REPO_PATH}" ]; then
-    echo "Creating directory ${REPO_PATH}..."
-    mkdir -p ${REPO_PATH}
-
-    # 克隆存储库
-    echo "Cloning repository from ${REPO_URL}..."
-    git clone ${REPO_URL} ${REPO_PATH}
-else
-    echo "Directory ${REPO_PATH} already exists. Skipping repository clone."
-fi
 
 # 切换到存储库目录
-cd ${REPO_PATH}
+cd $GOPATH/src/github.com/moby
 
 # 设置测试标志和目录
 BUILDFLAGS=" "
